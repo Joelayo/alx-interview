@@ -19,7 +19,6 @@ def canUnlockAll(boxes):
         box = stack.pop()
         # Check if the box contains any keys
         for key in boxes[box]:
-            # If the key corresponds to a locked box, mark it as unlocked and add it to the stack
             if key not in unlocked:
                 unlocked.add(key)
                 stack.append(key)
