@@ -1,10 +1,13 @@
 #!/usr/bin/python3
-"""
-Module for canUnlockAll function
-"""
+'''A module for working with lockboxes.
+'''
+
 
 def canUnlockAll(boxes):
-    # Set of boxes that have been checked
+    '''Checks if all the boxes in a list of boxes containing the keys
+    (indices) to other boxes can be unlocked given that the first
+    box is unlocked.
+    '''
     checked = set()
     # Queue of boxes to check
     queue = [0]
