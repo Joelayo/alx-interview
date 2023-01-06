@@ -1,3 +1,8 @@
+#!/usr/bin/python3
+"""
+Module for canUnlockAll function
+"""
+
 def canUnlockAll(boxes):
     # Set of boxes that have been checked
     checked = set()
