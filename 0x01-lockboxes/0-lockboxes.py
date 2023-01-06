@@ -4,22 +4,18 @@
 
 
 def canUnlockAll(boxes):
-    # Set of boxes that have been checked
+    '''Checks if all the boxes in a list of boxes containing the keys
+    (indices) to other boxes can be unlocked given that the first
+    box is unlocked.
+    '''
     checked = set()
-    # Stack of boxes to check
     stack = [0]
 
-    # Repeat the process until all boxes have been checked
     while stack:
-        # Get the next box to check
         box = stack.pop()
-        # Add the box to the set of checked boxes
         checked.add(box)
-        # Check if the box contains any keys
         for key in boxes[box]:
-            # If the key corresponds to an unchecked box, add it to the stack
             if key not in checked:
                 stack.append(key)
 
-    # Return whether all boxes have been checked
     return len(checked) == len(boxes)
