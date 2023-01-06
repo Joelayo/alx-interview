@@ -8,20 +8,16 @@ def canUnlockAll(boxes):
     (indices) to other boxes can be unlocked given that the first
     box is unlocked.
     '''
-    # Set of boxes that have been unlocked
-    unlocked = {0}
-    # Stack of boxes to check
-    stack = [0]
+    position = 0
+    unlocked = {}
 
-    # Repeat the process until all boxes have been checked
-    while stack:
-        # Get the next box to check
-        box = stack.pop()
-        # Check if the box contains any keys
-        for key in boxes[box]:
-            if key not in unlocked:
-                unlocked.add(key)
-                stack.append(key)
-
-    # Return whether all boxes have been unlocked
-    return len(unlocked) == len(boxes)
+    for box in boxes:
+        if len(box) == 0 or position == 0:
+            unlocked[position] = "always_unlocked"
+        for key in box:
+            if key < len(boxes) and key != position:
+                unlocked[key] = key
+        if len(unlocked) == len(boxes):
+            return True
+        position += 1
+    return False
