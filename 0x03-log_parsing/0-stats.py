@@ -1,63 +1,51 @@
-#!/usr/bin/python3
-import sys
-import signal
-import random
-from time import sleep
-import datetime
+import re
 
-# Function to handle keyboard interrupt
-def signal_handler(sig, frame):
+
+def extract_input(line):
+    log_fmt = r'\s*(?P<ip>\S+)\s\
+    *\[(?P<date>\d+\-\d+\-\d+ \d+:\d+:\d+\.\d+)\]\s*\
+    "(?P<request>[^"]*)"\s*(?P<status_code>\S+)\s*(?P<file_size>\d+)'
+    info = {'status_code': 0, 'file_size': 0}
+    match = re.fullmatch(log_fmt, line)
+    if match:
+        info['status_code'] = match.group('status_code')
+        info['file_size'] = int(match.group('file_size'))
+    return info
+
+
+def print_statistics(total_size, status_codes):
     print("File size: {}".format(total_size))
     for key in sorted(status_codes.keys()):
         if status_codes[key] > 0:
             print("{}: {}".format(key, status_codes[key]))
-    sys.exit(0)
 
-signal.signal(signal.SIGINT, signal_handler) # Register signal handler
 
-# Initialize variables
-total_size = 0
-status_codes = {'200': 0, '301': 0, '400': 0, '401': 0, '403': 0, '404': 0, '405': 0, '500': 0}
-line_count = 0
+def run():
+    total_size = 0
+    status_codes = {
+        '200': 0,
+        '301': 0,
+        '400': 0,
+        '401': 0,
+        '403': 0,
+        '404': 0,
+        '405': 0,
+        '500': 0}
+    line_count = 0
+    try:
+        while True:
+            line = input()
+            line_info = extract_input(line)
+            status_code = line_info.get('status_code', '0')
+            if status_code in status_codes.keys():
+                status_codes[status_code] += 1
+                total_size += line_info['file_size']
+                line_count += 1
+                if line_count % 10 == 0:
+                    print_statistics(total_size, status_codes)
+    except (KeyboardInterrupt, EOFError):
+        print_statistics(total_size, status_codes)
 
-for i in range(10000):
-    sleep(random.random())
-    line = "{}.{}.{}.{} - [{}] \"GET /projects/260 HTTP/1.1\" {} {}\n".format(
-        random.randint(1, 255), random.randint(1, 255), random.randint(1, 255), random.randint(1, 255),
-        datetime.datetime.now(),
-        random.choice([200, 301, 400, 401, 403, 404, 405, 500]),
-        random.randint(1, 1024)
-    )
-    sys.stdout.write(line)
-    sys.stdout.flush()
-    line_count += 1
 
-    # Split line by space
-    parts = line.split(" ")
-
-    # Check if line is in correct format
-    if len(parts) != 9:
-        continue
-
-    # Get status code and file size
-    status_code = parts[8]
-    file_size = parts[9]
-
-    # Check if status code is valid
-    if status_code.isnumeric() and int(status_code) in status_codes:
-        status_codes[status_code] += 1
-    else:
-        continue
-
-    # Check if file size is valid
-    if file_size.isnumeric():
-        total_size += int(file_size)
-    else:
-        continue
-
-    # Print statistics every 10 lines
-    if line_count % 10 == 0:
-        print("File size: {}".format(total_size))
-        for key in sorted(status_codes.keys()):
-            if status_codes[key] > 0:
-                print("{}: {}".format(key, status_codes[key]))
+if __name__ == '__main__':
+    run()
