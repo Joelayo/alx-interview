@@ -12,4 +12,5 @@ One solution per line
 Format: see example
 You don’t have to print the solutions in a specific order
 You are only allowed to import the sys module
+
 Read: [Queen](https://en.wikipedia.org/wiki/Queen_%28chess%29), [Backtracking](https://en.wikipedia.org/wiki/Backtracking)
