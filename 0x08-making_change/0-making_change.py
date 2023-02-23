@@ -1,20 +1,23 @@
 #!/usr/bin/python3
 """
-makeChange Module
+Module for making change
 """
 
 
 def makeChange(coins, total):
+    """
+    Determines the fewest number of coins needed to meet a given amount total.
+    """
     if total <= 0:
         return 0
 
-    # Initialize the dp array
-    dp = [float('inf') for _ in range(total+1)]
-    dp[0] = 0
+    coins.sort(reverse=True)
+    count = 0
+    for coin in coins:
+        while total >= coin:
+            total -= coin
+            count += 1
+        if total == 0:
+            return count
 
-    for c in coins:
-        for j in range(c, total+1):
-            if j >= c:
-                dp[j] = min(dp[j], dp[j-c] + 1)
-
-    return dp[total] if dp[total] < float('inf') else -1
+    return -1
